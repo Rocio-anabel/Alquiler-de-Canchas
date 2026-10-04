@@ -1,0 +1,91 @@
+
+@model IList<Alquiler_de_Canchas.Models.Usuario>
+
+@{
+    ViewData["Title"] = "Usuarios";
+}
+
+<h1>Usuarios</h1>
+
+<table class="table table-striped">
+    <thead>
+        <tr>
+            <th>Avatar</th>
+            <th>Nombre</th>
+            <th>Email</th>
+            <th>DNI</th>
+            <th>Rol</th>
+            <th></th>
+        </tr>
+    </thead>
+    <tbody>
+        @{
+            int idUsuarioActual = int.Parse(User.FindFirstValue(System.Security.Claims.ClaimTypes.NameIdentifier)!);
+         }
+        @foreach (var item in Model)
+        {
+            <tr>
+                <td>
+                    <img src="@(string.IsNullOrEmpty(item.Avatar) ? "/Uploads/Avatares/avatar-default.png" : item.Avatar)"
+                         alt="Avatar" style="width: 40px; height: 40px; object-fit: cover; border-radius: 50%;" />
+                </td>
+                <td>@item.Nombre @item.Apellido</td>
+                <td>@item.Email</td>
+                <td>@item.Dni</td>
+                <td>
+                    @if (item.Rol == Alquiler_de_Canchas.Models.RolUsuario.Administrador)
+                    {
+                        <span class="badge bg-primary">Administrador</span>
+                    }
+                    else
+                    {
+                        <span class="badge bg-secondary">Empleado</span>
+                    }
+                </td>
+                <td class="text-end">
+                    <a asp-action="Details" asp-route-id="@item.IdUsuario" class="btn btn-sm btn-info">Ver</a>
+                    <a asp-action="Edit" asp-route-id="@item.IdUsuario" class="btn btn-sm btn-warning">Editar</a>
+                    @if (item.IdUsuario != idUsuarioActual)
+                    {
+                        <a asp-action="Delete" asp-route-id="@item.IdUsuario" class="btn btn-sm btn-danger">Eliminar</a>
+                    }
+                </td>
+            </tr>
+        }
+    </tbody>
+</table>
+
+@if (!Model.Any())
+{
+    <p class="text-muted">No hay usuarios cargados.</p>
+}
+
+<nav>
+    <ul class="pagination">
+        @{
+            int paginaActual = ViewBag.PaginaActual is int p ? p : 1;
+            int totalPaginas = ViewBag.TotalPaginas is int t ? t : 1;
+        }
+
+        @if (paginaActual > 1)
+        {
+            <li class="page-item">
+                <a class="page-link" asp-action="Index" asp-route-pagina="@(paginaActual - 1)">Anterior</a>
+            </li>
+        }
+
+        @for (int i = 1; i <= totalPaginas; i++)
+        {
+            <li class="page-item @(i == paginaActual ? "active" : "")">
+                <a class="page-link" asp-action="Index" asp-route-pagina="@i">@i</a>
+            </li>
+        }
+
+        @if (paginaActual < totalPaginas)
+        {
+            <li class="page-item">
+                <a class="page-link" asp-action="Index" asp-route-pagina="@(paginaActual + 1)">Siguiente</a>
+            </li>
+        }
+    </ul>
+</nav>

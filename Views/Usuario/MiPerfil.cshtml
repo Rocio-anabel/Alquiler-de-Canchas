@@ -1,0 +1,76 @@
+@model Alquiler_de_Canchas.Models.Usuario
+
+<h1>Mi Perfil</h1>
+
+<form asp-action="MiPerfil" method="post" enctype="multipart/form-data">
+    <input type="hidden" asp-for="IdUsuario" />
+    <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+
+    <div class="form-group mb-3">
+        <label asp-for="Nombre"></label>
+        <input asp-for="Nombre" class="form-control" />
+    </div>
+
+    <div class="form-group mb-3">
+        <label asp-for="Apellido"></label>
+        <input asp-for="Apellido" class="form-control" />
+    </div>
+
+    <div class="form-group mb-3">
+        <label asp-for="Dni"></label>
+        <input asp-for="Dni" class="form-control" />
+        <span asp-validation-for="Dni" class="text-danger"></span>
+    </div>
+
+    <div class="form-group mb-3">
+        <label asp-for="Telefono">Teléfono</label>
+        <input asp-for="Telefono" class="form-control" />
+    </div>
+
+    <div class="form-group mb-3">
+        <label asp-for="Email"></label>
+        <input asp-for="Email" class="form-control" readonly/>
+    </div>
+
+    <hr />
+    <h5>Cambiar contraseña</h5>
+    <p class="text-muted">Dejá ambos campos en blanco si no querés cambiarla.</p>
+
+    <div class="form-group mb-3">
+        <label>Contraseña actual</label>
+        <input type="password" name="passwordActual" class="form-control" />
+    </div>
+
+    <div class="form-group mb-3">
+        <label>Nueva contraseña</label>
+        <input type="password" name="nuevaPassword" class="form-control" />
+    </div>
+
+    <hr />
+
+    <div class="form-group mb-3">
+        <label>Avatar</label>
+        <img id="previewAvatar" 
+             src="@(string.IsNullOrEmpty(Model.Avatar) ? "/Uploads/Avatares/avatar-default.png" : Model.Avatar)" 
+             style="width: 80px; height: 80px; object-fit: cover; border-radius: 50%;" class="d-block mb-2" />
+        <input type="file" name="archivoAvatar" id="inputAvatar" class="form-control" accept="image/*" />
+    </div>
+
+    <button type="submit" class="btn btn-primary">Guardar Cambios</button>
+</form>
+
+@section Scripts{
+    <script>
+        document.getElementById('inputAvatar').addEventListener('change', function (e) {
+        const archivo = e.target.files[0];
+    
+        if (archivo) {
+            const lector = new FileReader();
+            lector.onload = function (evento) {
+                document.getElementById('previewAvatar').src = evento.target.result;
+            };
+            lector.readAsDataURL(archivo);
+        }
+    });
+    </script>
+}

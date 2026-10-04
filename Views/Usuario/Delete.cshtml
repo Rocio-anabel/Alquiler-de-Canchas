@@ -1,0 +1,31 @@
+@model Alquiler_de_Canchas.Models.Usuario
+
+@{
+    ViewData["Title"] = "Eliminar Usuario";
+}
+
+<h1>Eliminar Usuario</h1>
+
+<h3>¿Estás seguro de que querés eliminar este usuario?</h3>
+
+<div class="mb-3">
+    <img src="@(string.IsNullOrEmpty(Model.Avatar) ? "/Uploads/Avatares/avatar-default.png" : Model.Avatar)"
+         alt="Avatar" style="width: 80px; height: 80px; object-fit: cover; border-radius: 50%;" />
+</div>
+
+<dl class="row">
+    <dt class="col-sm-3">Nombre</dt>
+    <dd class="col-sm-9">@Model.Nombre @Model.Apellido</dd>
+
+    <dt class="col-sm-3">Email</dt>
+    <dd class="col-sm-9">@Model.Email</dd>
+
+    <dt class="col-sm-3">Rol</dt>
+    <dd class="col-sm-9">@Model.Rol</dd>
+</dl>
+
+<form asp-action="Delete" method="post">
+    <input type="hidden" asp-for="IdUsuario" />
+    <button type="submit" class="btn btn-danger">Confirmar Eliminación</button>
+    <a asp-action="Index" class="btn btn-secondary">Cancelar</a>
+</form>

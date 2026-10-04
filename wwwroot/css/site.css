@@ -12,13 +12,8 @@ html {
   box-shadow: 0 0 0 0.1rem white, 0 0 0 0.25rem #258cfb;
 }
 
-html {
-  position: relative;
-  min-height: 100%;
-}
-
-body {
-  margin-bottom: 60px;
+html, body {
+    height: 100%;
 }
 
 .form-floating > .form-control-plaintext::placeholder, .form-floating > .form-control::placeholder {
@@ -28,4 +23,194 @@ body {
 
 .form-floating > .form-control-plaintext:focus::placeholder, .form-floating > .form-control:focus::placeholder {
   text-align: start;
+}
+
+:root {
+    --color-primary: #7a4a2f;      /* marrón terracota oscuro */
+    --color-primary-light: #a15c3a; /* terracota más claro para hover */
+    --color-accent: #b8863b;        /* dorado/ocre cálido */
+    --color-bg: #faf6f1;            /* beige muy claro, casi crema */
+    --color-text: #3a2e26;          /* marrón oscuro para texto */
+    --color-text-muted: #8a7568;    /* marrón grisáceo suave */
+}
+
+body {
+    font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+    background-color: var(--color-bg);
+    color: var(--color-text);
+    display: flex;
+    flex-direction: column;
+    min-height: 100vh;
+}
+
+h1, h2, h3, h4, .navbar-brand {
+    font-family: 'Poppins', sans-serif;
+}
+
+/* Navbar */
+.navbar-custom {
+    background-color: var(--color-primary);
+    padding: 0.9rem 0;
+    box-shadow: 0 2px 12px rgba(122, 74, 47, 0.25);
+}
+
+.navbar-custom .navbar-brand {
+    color: #fff8f0;
+    font-weight: 600;
+    font-size: 1.25rem;
+    letter-spacing: 0.3px;
+}
+
+.navbar-custom .brand-icon {
+    color: var(--color-accent);
+    margin-right: 6px;
+}
+
+.navbar-custom .navbar-nav {
+    gap: 0.15rem;
+}
+
+.navbar-custom .nav-link {
+    color: rgba(255, 248, 240, 0.85) !important;
+    padding: 0.5rem 0.6rem !important;
+    font-size: 0.92rem;
+    white-space: nowrap;
+}
+.navbar-custom .nav-link:hover {
+    color: #fff8f0 !important;
+    background-color: rgba(255, 248, 240, 0.12);
+}
+
+.navbar-custom .nav-link.active,
+.navbar-custom .nav-item .nav-link:focus {
+    color: var(--color-accent) !important;
+}
+
+.navbar-toggler {
+    border-color: rgba(255, 248, 240, 0.35);
+}
+
+.dropdown-item.text-danger:hover {
+    background-color: #fceceb;
+    color: #c0392b !important;
+}
+
+/* Contenido */
+.content-wrapper {
+    flex: 1 0 auto;
+    padding-top: 2rem;
+    padding-bottom: 3rem;
+}
+
+/* Tablas */
+.table {
+    background-color: #ffffff;
+    border-radius: 10px;
+    overflow: hidden;
+    box-shadow: 0 1px 4px rgba(122, 74, 47, 0.08);
+}
+
+.table > thead > tr > th {
+    background-color: var(--color-primary) !important;
+    color: #fff8f0 !important;
+    font-weight: 500;
+    font-size: 0.85rem;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+    border: none;
+    padding: 0.9rem 1rem;
+}
+
+.table tbody td {
+    padding: 0.85rem 1rem;
+    vertical-align: middle;
+    border-color: #f0e6da;
+}
+
+.table tbody tr:hover {
+    background-color: #fbf3ea;
+}
+
+/* Botones */
+
+.btn-primary {
+    background-color: #1f6f6b;
+    border-color: #1f6f6b;
+    color: #fff8f0;
+    font-weight: 500;
+}
+
+.btn-primary:hover {
+    background-color: #185753;
+    border-color: #185753;
+    color: #fff8f0;
+}
+
+.btn-warning {
+    background-color: var(--color-accent);
+    border-color: var(--color-accent);
+    color: #fff8f0;
+    font-weight: 500;
+}
+
+.btn-warning:hover {
+    filter: brightness(0.92);
+    color: #fff8f0;
+}
+
+.btn-info {
+    background-color: #6d8a70; /* verde oliva suave, complementa lo terracota */
+    border-color: #6d8a70;
+    color: #fff8f0;
+}
+
+.btn-info:hover {
+    filter: brightness(0.92);
+    color: #fff8f0;
+}
+
+.btn-danger {
+    background-color: #dc3545;
+    border-color: #dc3545;
+}
+
+.btn-danger:hover {
+    background-color: #bb2d3b;
+    border-color: #bb2d3b;
+}
+
+/* Cards / formularios */
+.form-control:focus {
+    border-color: var(--color-primary-light);
+    box-shadow: 0 0 0 0.2rem rgba(161, 92, 58, 0.15);
+}
+
+/* Footer */
+.footer-custom {
+    flex-shrink: 0;
+    background-color: #ffffff;
+    border-top: 1px solid #f0e6da;
+    padding: 1.5rem 0;
+    color: var(--color-text-muted);
+    font-size: 0.9rem;
+    display: flex;
+}
+
+.footer-custom .container {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.footer-custom a {
+    color: var(--color-text-muted);
+    text-decoration: none;
+}
+
+.footer-custom a:hover {
+    color: var(--color-primary);
+}
+
+#toast-container .toast {
+    position: relative !important;
 }

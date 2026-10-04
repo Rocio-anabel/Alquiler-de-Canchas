@@ -1,0 +1,36 @@
+@model Alquiler_de_Canchas.Models.Usuario
+
+@{
+    ViewData["Title"] = "Detalle del Usuario";
+}
+
+<h1>Detalle del Usuario</h1>
+
+<div class="mb-3">
+    <img src="@(string.IsNullOrEmpty(Model.Avatar) ? "/Uploads/Avatares/avatar-default.png" : Model.Avatar)"
+         alt="Avatar" style="width: 100px; height: 100px; object-fit: cover; border-radius: 50%;" />
+</div>
+
+<dl class="row">
+    <dt class="col-sm-3">Nombre</dt>
+    <dd class="col-sm-9">@Model.Nombre @Model.Apellido</dd>
+
+    <dt class="col-sm-3">Email</dt>
+    <dd class="col-sm-9">@Model.Email</dd>
+
+    <dt class="col-sm-3">DNI</dt>
+    <dd class="col-sm-9">@Model.Dni</dd>
+
+    <dt class="col-sm-3">Teléfono</dt>
+    <dd class="col-sm-9">@(Model.Telefono ?? "-")</dd>
+
+
+    <dt class="col-sm-3">Rol</dt>
+    <dd class="col-sm-9">@Model.Rol</dd>
+
+    <dt class="col-sm-3">Estado</dt>
+    <dd class="col-sm-9">@(Model.Estado ? "Activo" : "Inactivo")</dd>
+</dl>
+
+<a asp-action="Edit" asp-route-id="@Model.IdUsuario" class="btn btn-warning">Editar</a>
+<a asp-action="Index" class="btn btn-secondary">Volver al listado</a>
