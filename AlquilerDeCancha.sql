@@ -23,6 +23,15 @@ CREATE TABLE IF NOT EXISTS `usuario` (
   UNIQUE KEY `uk_usuario_dni` (`dni`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
+-- ---------------------- CLIENTE ----------------------
+CREATE TABLE IF NOT EXISTS `alquiler_canchas`.`cliente` (
+  `ID_cliente` INT NOT NULL AUTO_INCREMENT , 
+  `nombre` VARCHAR(30) NOT NULL , 
+  `apellido` VARCHAR(30) NOT NULL ,
+  `email` VARCHAR(255) NOT NULL , 
+  `telefono` VARCHAR(20) NOT NULL , 
+  PRIMARY KEY (`ID_cliente`)) ENGINE = InnoDB;
+
 -- Datos de prueba (contraseñas hasheadas con PasswordHasher de ASP.NET Core)
 --   admin@canchas.com     / Admin123!
 --   empleado@canchas.com  / Empleado123!
