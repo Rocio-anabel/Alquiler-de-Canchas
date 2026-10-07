@@ -1,6 +1,7 @@
 using Alquiler_de_Canchas.Models;
 using System.Globalization;
 using Microsoft.AspNetCore.Authentication.Cookies;
+using Microsoft.EntityFrameworkCore;
 
 CultureInfo.DefaultThreadCurrentCulture = CultureInfo.InvariantCulture;
 CultureInfo.DefaultThreadCurrentUICulture = CultureInfo.InvariantCulture;
@@ -19,8 +20,14 @@ builder.Services.AddAuthentication(CookieAuthenticationDefaults.AuthenticationSc
         options.SlidingExpiration = true;
     });
 
-// Registro de repositorios (ADO.NET)
+// Repositorios (ADO.NET)
 builder.Services.AddScoped<IRepositorioUsuario, RepositorioUsuario>();
+builder.Services.AddScoped<IRepositorioCliente, RepositorioCliente>();
+
+// Entity Framework Core + Pomelo (MySQL)
+var cs = builder.Configuration["ConnectionStrings:DefaultConnection"]!;
+builder.Services.AddDbContext<DataContext>(options =>
+    options.UseMySql(cs, ServerVersion.AutoDetect(cs)));
 
 var app = builder.Build();
 

@@ -1,9 +1,14 @@
 using System.ComponentModel.DataAnnotations;
+using System.ComponentModel.DataAnnotations.Schema; 
+
 namespace Alquiler_de_Canchas.Models
 {
-    public class Cliente
+    [Table("cliente")]                 
+    public class Cliente          
     {
+        [Key, Column("ID_cliente")]                 
         public int IdCliente {get; set;}
+    
         [Required(ErrorMessage = "El nombre es obligatorio")]
         [StringLength(30, MinimumLength = 2, ErrorMessage = "El nombre debe tener entre 2 y 30 caracteres")]
         [RegularExpression(@"^[^0-9]+$", ErrorMessage = "El nombre no puede contener números")]

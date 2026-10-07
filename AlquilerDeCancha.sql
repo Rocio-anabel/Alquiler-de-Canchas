@@ -5,6 +5,7 @@
 CREATE DATABASE IF NOT EXISTS alquiler_canchas
   CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci;
 USE alquiler_canchas;
+ALTER TABLE usuario MODIFY estado tinyint(1) NOT NULL DEFAULT 1;
 
 -- ---------------------- USUARIO ----------------------
 CREATE TABLE IF NOT EXISTS `usuario` (
