@@ -33,6 +33,13 @@ CREATE TABLE IF NOT EXISTS `alquiler_canchas`.`cliente` (
   `telefono` VARCHAR(20) NOT NULL , 
   PRIMARY KEY (`ID_cliente`)) ENGINE = InnoDB;
 
+------------------------- TIPO DE CANCHAS ----------------------
+CREATE TABLE IF NOT EXISTS `alquiler_canchas`.`tipo_cancha` (
+  `ID_tipo_cancha` INT NOT NULL AUTO_INCREMENT, 
+  `nombre` VARCHAR(50) NOT NULL, 
+  `estado` TINYINT NOT NULL, 
+  PRIMARY KEY (`ID_tipo_cancha`)) ENGINE = InnoDB;
+
 -- Datos de prueba (contraseñas hasheadas con PasswordHasher de ASP.NET Core)
 --   admin@canchas.com     / Admin123!
 --   empleado@canchas.com  / Empleado123!
