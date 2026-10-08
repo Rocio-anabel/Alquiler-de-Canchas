@@ -8,7 +8,7 @@ namespace Alquiler_de_Canchas.Models
 
         public DbSet<Usuario> Usuarios { get; set; }
         public DbSet<Cliente> Clientes { get; set; }
-
+        public DbSet<TipoCancha> TipoCanchas {get; set;}
         protected override void OnModelCreating(ModelBuilder mb)
         {
             // enum('Empleado','Administrador') en la BD
