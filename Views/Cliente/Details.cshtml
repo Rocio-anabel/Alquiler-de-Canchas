@@ -1,0 +1,26 @@
+@model Alquiler_de_Canchas.Models.Cliente
+
+@{
+    ViewData["Title"] = "Detalle del Cliente";
+}
+
+<h1>Detalle del Cliente</h1>
+
+<dl class="row">
+    <dt class="col-sm-2">Nombre</dt>
+    <dd class="col-sm-10">@Model.Nombre</dd>
+
+    <dt class="col-sm-2">Apellido</dt>
+    <dd class="col-sm-10">@Model.Apellido</dd>
+
+    <dt class="col-sm-2">Teléfono</dt>
+    <dd class="col-sm-10">@Model.Telefono</dd>
+
+    <dt class="col-sm-2">Email</dt>
+    <dd class="col-sm-10">@Model.Email</dd>
+</dl>
+
+<div>
+    <a asp-action="Edit" asp-route-id="@Model.IdCliente" class="btn btn-primary">Editar</a>
+    <a asp-action="Index" class="btn btn-secondary">Volver a la lista</a>
+</div>

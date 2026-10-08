@@ -1,0 +1,113 @@
+@model IList<Alquiler_de_Canchas.Models.Cliente>
+
+@{
+    ViewData["Title"] = "Clientes";
+}
+
+<h1>Clientes</h1>
+<p>
+    <a asp-action="Create" class="btn btn-primary">Nuevo Cliente</a>
+</p>
+
+@if (TempData["error"] != null)
+{
+    <div class="alert alert-danger">@TempData["error"]</div>
+}
+@if (TempData["success"] != null)
+{
+    <div class="alert alert-success">@TempData["success"]</div>
+}
+
+<table class="table table-striped">
+    <thead>
+        <tr>
+            <th>Nombre</th>
+            <th>Email</th>
+            <th>Teléfono</th>
+            <th></th>
+        </tr>
+    </thead>
+
+    <tbody>
+        @foreach (var item in Model)
+        {
+            <tr>
+                <td>@item.Nombre @item.Apellido</td>
+                <td>@item.Email</td>
+                <td>@item.Telefono</td>
+
+                <td class="text-end">
+                    <a asp-action="Details"
+                       asp-route-id="@item.IdCliente"
+                       class="btn btn-sm btn-info">
+                        Ver
+                    </a>
+
+                    <a asp-action="Edit"
+                       asp-route-id="@item.IdCliente"
+                       class="btn btn-sm btn-warning">
+                        Editar
+                    </a>
+                 @if (User.IsInRole("Administrador"))
+                    {
+                        <a asp-action="Delete"
+                           asp-route-id="@item.IdCliente"
+                           class="btn btn-sm btn-danger">
+                             Eliminar
+                        </a>
+                    }
+                    
+                </td>
+            </tr>
+        }
+    </tbody>
+</table>
+
+@if (!Model.Any())
+{
+    <p class="text-muted">No hay clientes cargados.</p>
+}
+
+<nav>
+    <ul class="pagination">
+
+        @{
+            int paginaActual = ViewBag.PaginaActual is int p ? p : 1;
+            int totalPaginas = ViewBag.TotalPaginas is int t ? t : 1;
+        }
+
+        @if (paginaActual > 1)
+        {
+            <li class="page-item">
+                <a class="page-link"
+                   asp-action="Index"
+                   asp-route-pagina="@(paginaActual - 1)">
+                    Anterior
+                </a>
+            </li>
+        }
+
+        @for (int i = 1; i <= totalPaginas; i++)
+        {
+            <li class="page-item @(i == paginaActual ? "active" : "")">
+                <a class="page-link"
+                   asp-action="Index"
+                   asp-route-pagina="@i">
+                    @i
+                </a>
+            </li>
+        }
+
+        @if (paginaActual < totalPaginas)
+        {
+            <li class="page-item">
+                <a class="page-link"
+                   asp-action="Index"
+                   asp-route-pagina="@(paginaActual + 1)">
+                    Siguiente
+                </a>
+            </li>
+        }
+
+    </ul>
+</nav>
