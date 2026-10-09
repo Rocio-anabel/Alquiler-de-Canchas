@@ -36,7 +36,7 @@ namespace Alquiler_de_Canchas.Models
 
         public int ObtenerCantidad()
         {
-            return contexto.TipoCanchas.Count();
+            return contexto.TipoCanchas.Count(t => t.Estado);
         }
 
         public IList<TipoCancha> ObtenerLista(int paginaNro = 1, int tamPagina = 10)

@@ -1,0 +1,43 @@
+@model IEnumerable<Alquiler_de_Canchas.Models.TipoCancha>
+
+@{
+    ViewData["Title"] = "Tipos de Cancha";
+}
+
+<h1>Tipos de Cancha</h1>
+
+@if (TempData["mensaje"] != null)
+{
+    <div class="alert alert-success">@TempData["mensaje"]</div>
+}
+@if (TempData["error"] != null)
+{
+    <div class="alert alert-danger">@TempData["error"]</div>
+}
+
+<p>
+    <a asp-action="Create" class="btn btn-primary">Nuevo Tipo de Cancha</a>
+</p>
+
+<table class="table table-striped">
+    <thead>
+        <tr>
+            <th>Id</th>
+            <th>Nombre</th>
+            <th></th>
+        </tr>
+    </thead>
+    <tbody>
+        @foreach (var item in Model)
+        {
+            <tr>
+                <td>@item.IdTipoCancha</td>
+                <td>@item.Nombre</td>
+                <td class="text-end">
+                    <a asp-action="Edit" asp-route-id="@item.IdTipoCancha" class="btn btn-sm btn-outline-primary">Editar</a>
+                    <a asp-action="Delete" asp-route-id="@item.IdTipoCancha" class="btn btn-sm btn-outline-danger">Eliminar</a>
+                </td>
+            </tr>
+        }
+    </tbody>
+</table>

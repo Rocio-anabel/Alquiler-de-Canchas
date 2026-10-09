@@ -1,0 +1,22 @@
+
+@model Alquiler_de_Canchas.Models.TipoCancha
+
+@{
+    ViewData["Title"] = "Eliminar Tipo de Cancha";
+}
+
+<h1>Eliminar Tipo de Cancha</h1>
+
+<div class="alert alert-warning">
+    ¿Estás seguro de que querés dar de baja este tipo de cancha?
+</div>
+
+<dl class="row">
+    <dt class="col-sm-2">Nombre</dt>
+    <dd class="col-sm-10">@Model.Nombre</dd>
+</dl>
+
+<form asp-action="Delete" asp-route-id="@Model.IdTipoCancha" method="post">
+    <button type="submit" class="btn btn-danger">Confirmar baja</button>
+    <a asp-action="Index" class="btn btn-secondary">Cancelar</a>
+</form>
