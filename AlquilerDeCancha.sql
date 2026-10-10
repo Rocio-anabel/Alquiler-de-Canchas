@@ -40,6 +40,24 @@ CREATE TABLE IF NOT EXISTS `alquiler_canchas`.`tipo_cancha` (
   `estado` TINYINT NOT NULL, 
   PRIMARY KEY (`ID_tipo_cancha`)) ENGINE = InnoDB;
 
+------------------------- CANCHA ----------------------
+CREATE TABLE IF NOT EXISTS `alquiler_canchas`.`cancha` (
+    `ID_cancha` INT NOT NULL AUTO_INCREMENT,
+    `numero` INT NOT NULL,
+    `tipo_superficie` VARCHAR(50) NOT NULL,
+    `techada` TINYINT NOT NULL,
+    `precio_por_hora` DOUBLE NOT NULL,
+    `ID_tipo_cancha` INT NOT NULL,
+    `estado` TINYINT NOT NULL,
+    PRIMARY KEY (`ID_cancha`),
+    
+    CONSTRAINT `fk_cancha_tipo_cancha` 
+        FOREIGN KEY (`ID_tipo_cancha`) 
+        REFERENCES `tipo_cancha`(`ID_tipo_cancha`) 
+        ON DELETE RESTRICT 
+        ON UPDATE RESTRICT
+) ENGINE = InnoDB;
+
 -- Datos de prueba (contraseñas hasheadas con PasswordHasher de ASP.NET Core)
 --   admin@canchas.com     / Admin123!
 --   empleado@canchas.com  / Empleado123!
