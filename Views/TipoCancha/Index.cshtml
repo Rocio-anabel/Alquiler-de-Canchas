@@ -34,8 +34,12 @@
                 <td>@item.IdTipoCancha</td>
                 <td>@item.Nombre</td>
                 <td class="text-end">
-                    <a asp-action="Edit" asp-route-id="@item.IdTipoCancha" class="btn btn-sm btn-outline-primary">Editar</a>
-                    <a asp-action="Delete" asp-route-id="@item.IdTipoCancha" class="btn btn-sm btn-outline-danger">Eliminar</a>
+                    @if (User.IsInRole("Administrador"))
+                    {
+                        <a asp-action="Edit" asp-route-id="@item.IdTipoCancha" class="btn btn-sm btn-outline-primary">Editar</a>
+                        <a asp-action="Delete" asp-route-id="@item.IdTipoCancha" class="btn btn-sm btn-outline-danger">Eliminar</a>
+                    }
+                    
                 </td>
             </tr>
         }
