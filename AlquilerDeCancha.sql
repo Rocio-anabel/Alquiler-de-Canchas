@@ -58,6 +58,21 @@ CREATE TABLE IF NOT EXISTS `alquiler_canchas`.`cancha` (
         ON UPDATE RESTRICT
 ) ENGINE = InnoDB;
 
+------------------------- IMAGEN ----------------------
+CREATE TABLE IF NOT EXISTS `alquiler_canchas`.`imagen` (
+    `ID_imagen` INT NOT NULL AUTO_INCREMENT,
+    `ID_cancha` INT NOT NULL,
+    `url` VARCHAR(255) NOT NULL,
+    `fecha_subida` DATETIME NOT NULL,
+    PRIMARY KEY (`ID_imagen`),
+  
+    CONSTRAINT `fk_imagen_cancha` 
+        FOREIGN KEY (`ID_cancha`) 
+        REFERENCES `cancha`(`ID_cancha`) 
+        ON DELETE RESTRICT 
+        ON UPDATE RESTRICT
+) ENGINE = InnoDB;
+
 -- Datos de prueba (contraseñas hasheadas con PasswordHasher de ASP.NET Core)
 --   admin@canchas.com     / Admin123!
 --   empleado@canchas.com  / Empleado123!
