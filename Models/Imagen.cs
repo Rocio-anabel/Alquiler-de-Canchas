@@ -13,7 +13,6 @@ namespace Alquiler_de_Canchas.Models
         public Cancha? Cancha { get; set; }
 		public string Url { get; set; } = "";
         public DateTime FechaSubida {get; set;} = DateTime.Now;
-        public bool Estado {get; set; } = true;
         [NotMapped]
 		public IFormFile? Archivo { get; set; } = null;
     }
