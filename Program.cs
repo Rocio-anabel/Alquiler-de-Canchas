@@ -24,6 +24,9 @@ builder.Services.AddAuthentication(CookieAuthenticationDefaults.AuthenticationSc
 builder.Services.AddScoped<IRepositorioUsuario, RepositorioUsuario>();
 builder.Services.AddScoped<IRepositorioCliente, RepositorioCliente>();
 builder.Services.AddScoped<IRepositorioTipoCancha, RepositorioTipoCancha>();
+builder.Services.AddScoped<IRepositorioCancha, RepositorioCancha>();
+builder.Services.AddScoped<IRepositorioImagen, RepositorioImagen>();
+ 
 
 // Entity Framework Core + Pomelo (MySQL)
 var cs = builder.Configuration["ConnectionStrings:DefaultConnection"]!;
