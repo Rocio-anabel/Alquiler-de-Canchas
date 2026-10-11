@@ -25,5 +25,6 @@ namespace Alquiler_de_Canchas.Models
         public bool Estado {get; set;} = true;
         [ForeignKey(nameof(IdTipoCancha))]
         public TipoCancha? TipoCancha {get; set;}
+        public List<Imagen> Imagenes { get; set; } = new();
     }
 }
