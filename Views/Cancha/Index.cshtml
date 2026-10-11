@@ -1,0 +1,79 @@
+@model IList<Alquiler_de_Canchas.Models.Cancha>
+
+@{
+    ViewData["Title"] = "Canchas";
+    int paginaActual = ViewBag.PaginaActual is int p ? p : 1;
+    int totalPaginas = ViewBag.TotalPaginas is int t ? t : 1;
+}
+
+<h1>Canchas</h1>
+
+@if (User.IsInRole("Administrador"))
+{
+    <p><a asp-action="Create" class="btn btn-primary">Nueva Cancha</a></p>
+}
+
+<table class="table table-striped align-middle">
+    <thead>
+        <tr>
+            <th></th>
+            <th>N°</th>
+            <th>Tipo</th>
+            <th>Superficie</th>
+            <th>Techada</th>
+            <th>Precio/hora</th>
+            <th></th>
+        </tr>
+    </thead>
+    <tbody>
+        @foreach (var item in Model)
+        {
+            var portada = item.Imagenes.OrderBy(i => i.FechaSubida).FirstOrDefault();
+            <tr>
+                <td style="width:90px">
+                    @if (portada != null)
+                    {
+                        <img src="@portada.Url" alt="Cancha @item.Numero" class="img-thumbnail" style="width:80px;height:60px;object-fit:cover" />
+                    }
+                </td>
+                <td>@item.Numero</td>
+                <td>@item.TipoCancha?.Nombre</td>
+                <td>@item.TipoSuperficie</td>
+                <td>@(item.Techada ? "Sí" : "No")</td>
+                <td>$@item.PrecioPorHora.ToString("N2")</td>
+                <td class="text-end">
+                    <a asp-action="Details" asp-route-id="@item.IdCancha" class="btn btn-sm btn-info">Ver</a>
+                    @if (User.IsInRole("Administrador"))
+                    {
+                        <a asp-action="Edit" asp-route-id="@item.IdCancha" class="btn btn-sm btn-warning">Editar</a>
+                        <a asp-action="Delete" asp-route-id="@item.IdCancha" class="btn btn-sm btn-danger">Dar de baja</a>
+                    }
+                </td>
+            </tr>
+        }
+    </tbody>
+</table>
+
+@if (!Model.Any())
+{
+    <p class="text-muted">No hay canchas cargadas.</p>
+}
+
+<nav>
+    <ul class="pagination">
+        @if (paginaActual > 1)
+        {
+            <li class="page-item"><a class="page-link" asp-action="Index" asp-route-pagina="@(paginaActual - 1)">Anterior</a></li>
+        }
+        @for (int i = 1; i <= totalPaginas; i++)
+        {
+            <li class="page-item @(i == paginaActual ? "active" : "")">
+                <a class="page-link" asp-action="Index" asp-route-pagina="@i">@i</a>
+            </li>
+        }
+        @if (paginaActual < totalPaginas)
+        {
+            <li class="page-item"><a class="page-link" asp-action="Index" asp-route-pagina="@(paginaActual + 1)">Siguiente</a></li>
+        }
+    </ul>
+</nav>

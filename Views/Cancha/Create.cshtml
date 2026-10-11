@@ -1,0 +1,22 @@
+@model Alquiler_de_Canchas.Models.Cancha
+@{
+    ViewData["Title"] = "Nueva Cancha";
+}
+
+<h1>Nueva Cancha</h1>
+
+<form asp-action="Create" method="post" enctype="multipart/form-data">
+    <partial name="_Campos" model="Model" />
+
+    <div class="mb-3">
+        <label class="form-label">Fotos (JPG, PNG o WEBP, máx. 5 MB c/u)</label>
+        <input type="file" name="archivos" class="form-control" accept=".jpg,.jpeg,.png,.webp" multiple />
+    </div>
+
+    <button type="submit" class="btn btn-primary">Guardar</button>
+    <a asp-action="Index" class="btn btn-secondary">Cancelar</a>
+</form>
+
+@section Scripts {
+    @{await Html.RenderPartialAsync("_ValidationScriptsPartial");}
+}

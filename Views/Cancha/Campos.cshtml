@@ -1,0 +1,35 @@
+@model Alquiler_de_Canchas.Models.Cancha
+
+<div asp-validation-summary="ModelOnly" class="text-danger"></div>
+
+<div class="row">
+    <div class="col-md-4 mb-3">
+        <label asp-for="Numero" class="form-label">Número</label>
+        <input asp-for="Numero" class="form-control" />
+        <span asp-validation-for="Numero" class="text-danger"></span>
+    </div>
+    <div class="col-md-8 mb-3">
+        <label asp-for="IdTipoCancha" class="form-label">Tipo de cancha</label>
+        <select asp-for="IdTipoCancha" asp-items="(SelectList)ViewBag.Tipos" class="form-select">
+            <option value="">-- Seleccioná un tipo --</option>
+        </select>
+        <span asp-validation-for="IdTipoCancha" class="text-danger"></span>
+    </div>
+</div>
+
+<div class="row">
+    <div class="col-md-6 mb-3">
+        <label asp-for="TipoSuperficie" class="form-label">Tipo de superficie</label>
+        <input asp-for="TipoSuperficie" class="form-control" placeholder="Césped sintético, cemento, parquet..." />
+        <span asp-validation-for="TipoSuperficie" class="text-danger"></span>
+    </div>
+    <div class="col-md-6 mb-3">
+        <label asp-for="PrecioPorHora" class="form-label">Precio por hora</label>
+        <input asp-for="PrecioPorHora" class="form-control" type="number" step="0.01" min="0.01" />
+        <span asp-validation-for="PrecioPorHora" class="text-danger"></span>
+    </div>
+</div>
+
+<div class="form-check mb-3">
+    <input asp-for="Techada" class="form-check-input" />
+    <label asp-for="Techada" class="form-check-label">Techada</label>

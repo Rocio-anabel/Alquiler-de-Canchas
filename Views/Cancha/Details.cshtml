@@ -1,0 +1,39 @@
+@model Alquiler_de_Canchas.Models.Cancha
+@{
+    ViewData["Title"] = "Cancha " + Model.Numero;
+}
+
+<h1>Cancha N° @Model.Numero</h1>
+
+<dl class="row">
+    <dt class="col-sm-3">Tipo</dt>
+    <dd class="col-sm-9">@Model.TipoCancha?.Nombre</dd>
+    <dt class="col-sm-3">Superficie</dt>
+    <dd class="col-sm-9">@Model.TipoSuperficie</dd>
+    <dt class="col-sm-3">Techada</dt>
+    <dd class="col-sm-9">@(Model.Techada ? "Sí" : "No")</dd>
+    <dt class="col-sm-3">Precio por hora</dt>
+    <dd class="col-sm-9">$@Model.PrecioPorHora.ToString("N2")</dd>
+</dl>
+
+<h4>Fotos</h4>
+@if (!Model.Imagenes.Any())
+{
+    <p class="text-muted">Sin fotos cargadas.</p>
+}
+<div class="row">
+    @foreach (var img in Model.Imagenes.OrderBy(i => i.FechaSubida))
+    {
+        <div class="col-6 col-md-4 mb-3">
+            <a href="@img.Url" target="_blank">
+                <img src="@img.Url" class="img-fluid rounded" alt="Foto de cancha" style="height:200px;width:100%;object-fit:cover" />
+            </a>
+        </div>
+    }
+</div>
+
+@if (User.IsInRole("Administrador"))
+{
+    <a asp-action="Edit" asp-route-id="@Model.IdCancha" class="btn btn-warning">Editar</a>
+}
+<a asp-action="Index" class="btn btn-secondary">Volver</a>

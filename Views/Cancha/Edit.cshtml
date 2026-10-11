@@ -1,0 +1,48 @@
+@model Alquiler_de_Canchas.Models.Cancha
+@{
+    ViewData["Title"] = "Editar Cancha";
+}
+
+<h1>Editar Cancha</h1>
+
+<form asp-action="Edit" asp-route-id="@Model.IdCancha" method="post" enctype="multipart/form-data">
+    <partial name="_Campos" model="Model" />
+
+    <div class="mb-3">
+        <label class="form-label">Agregar fotos (JPG, PNG o WEBP, máx. 5 MB c/u)</label>
+        <input type="file" name="archivos" class="form-control" accept=".jpg,.jpeg,.png,.webp" multiple />
+    </div>
+
+    <button type="submit" class="btn btn-primary">Guardar cambios</button>
+    <a asp-action="Index" class="btn btn-secondary">Cancelar</a>
+</form>
+
+@* Galería: los formularios de borrado van FUERA del formulario principal (no se pueden anidar) *@
+<hr />
+<h4>Fotos actuales</h4>
+@if (!Model.Imagenes.Any())
+{
+    <p class="text-muted">Esta cancha todavía no tiene fotos.</p>
+}
+<div class="row">
+    @foreach (var img in Model.Imagenes)
+    {
+        <div class="col-6 col-md-3 mb-3">
+            <div class="card">
+                <img src="@img.Url" class="card-img-top" alt="Foto de cancha" style="height:140px;object-fit:cover" />
+                <div class="card-body p-2 text-center">
+                    <form asp-action="EliminarImagen" method="post"
+                          onsubmit="return confirm('¿Eliminar esta foto?');">
+                        <input type="hidden" name="idImagen" value="@img.IdImagen" />
+                        <input type="hidden" name="idCancha" value="@Model.IdCancha" />
+                        <button type="submit" class="btn btn-sm btn-outline-danger">Eliminar</button>
+                    </form>
+                </div>
+            </div>
+        </div>
+    }
+</div>
+
+@section Scripts {
+    @{await Html.RenderPartialAsync("_ValidationScriptsPartial");}
+}
