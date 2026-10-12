@@ -12,6 +12,8 @@ namespace Alquiler_de_Canchas.Models
         [ForeignKey(nameof(IdCancha))]
         public Cancha? Cancha { get; set; }
 		public string Url { get; set; } = "";
+
+        [Column("fecha_subida")]
         public DateTime FechaSubida {get; set;} = DateTime.Now;
         [NotMapped]
 		public IFormFile? Archivo { get; set; } = null;

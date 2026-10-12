@@ -14,10 +14,12 @@ namespace Alquiler_de_Canchas.Models
         public int Numero {get; set;}
         [Required(ErrorMessage = "El tipo de superficie es obligatorio")]
         [StringLength(50, MinimumLength = 3, ErrorMessage = "El tipo de superficie debe tener entre 3 y 50 caracteres.")]
+        [Column("tipo_superficie")]
         public required string TipoSuperficie {get; set;}
         public bool Techada {get; set;} = false;
         [Required(ErrorMessage ="El precio por hora es obligatorio")]
         [Range(0.01, double.MaxValue, ErrorMessage = "El precio por hora debe ser mayor a 0")]
+        [Column("precio_por_hora")]
         public double PrecioPorHora {get; set;}
         [Required(ErrorMessage = "El tipo de cancha es obligatorio")]
         [Column("ID_tipo_cancha")]
