@@ -18,8 +18,10 @@ namespace Alquiler_de_Canchas.Models
         [Required(ErrorMessage = "La fecha del turno es obligatoria.")]
         [DataType(DataType.Date)]
         public DateTime Fecha {get; set;}
+        [Column("hora_inicio")]
         [Required(ErrorMessage = "La hora de inicio es obligatoria.")]
         public TimeOnly HoraInicio {get; set;}
+        [Column("hora_fin")]
         [Required(ErrorMessage = "La hora de fin es obligatoria.")]
         public TimeOnly HoraFin {get; set;}
         public EstadoTurno Estado {get; set;} = EstadoTurno.Confirmado;
