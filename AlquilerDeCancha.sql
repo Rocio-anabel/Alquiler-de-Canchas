@@ -72,6 +72,34 @@ CREATE TABLE IF NOT EXISTS `imagen` (
     ON UPDATE RESTRICT
 ) ENGINE=InnoDB;
 
+-- ---------------------- TURNO -----------------------
+CREATE TABLE IF NOT EXISTS `alquiler_canchas`.`turno` (
+    `ID_turno` INT NOT NULL AUTO_INCREMENT,
+    `ID_cancha` INT NOT NULL,
+    `ID_cliente` INT NOT NULL,
+    `ID_usuario` INT NOT NULL,
+    `fecha` DATE NOT NULL,
+    `hora_inicio` TIME NOT NULL,
+    `hora_fin` TIME NOT NULL,
+    `estado` ENUM('Confirmado','Finalizado','Cancelado','Ausente') NOT NULL DEFAULT 'Confirmado',
+    PRIMARY KEY (`ID_turno`),
+    
+    CONSTRAINT `fk_turno_cancha` 
+        FOREIGN KEY (`ID_cancha`) 
+        REFERENCES `cancha`(`ID_cancha`) 
+        ON DELETE RESTRICT ON UPDATE RESTRICT,
+        
+    CONSTRAINT `fk_turno_cliente` 
+        FOREIGN KEY (`ID_cliente`) 
+        REFERENCES `cliente`(`ID_cliente`) 
+        ON DELETE RESTRICT ON UPDATE RESTRICT,
+        
+    CONSTRAINT `fk_turno_usuario` 
+        FOREIGN KEY (`ID_usuario`) 
+        REFERENCES `usuario`(`ID_usuario`) 
+        ON DELETE RESTRICT ON UPDATE RESTRICT
+) ENGINE = InnoDB;
+
 -- =====================================================
 -- DATOS DE PRUEBA
 -- (contraseñas hasheadas con PasswordHasher de ASP.NET Core)
