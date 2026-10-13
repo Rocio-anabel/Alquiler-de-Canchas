@@ -23,6 +23,12 @@ namespace Alquiler_de_Canchas.Models
         [Required(ErrorMessage = "La hora de fin es obligatoria.")]
         public TimeOnly HoraFin {get; set;}
         public EstadoTurno Estado {get; set;} = EstadoTurno.Confirmado;
+        [ForeignKey(nameof(IdCancha))]
+        public Cancha? Cancha {get; set;}
+        [ForeignKey(nameof(IdCliente))]
+        public Cliente? Cliente {get; set;}
+        [ForeignKey(nameof(IdUsuario))]
+        public Usuario? Usuario {get; set;}
 
         public IEnumerable<ValidationResult> Validate(ValidationContext validationContext)
         {
