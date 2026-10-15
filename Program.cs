@@ -26,6 +26,7 @@ builder.Services.AddScoped<IRepositorioCliente, RepositorioCliente>();
 builder.Services.AddScoped<IRepositorioTipoCancha, RepositorioTipoCancha>();
 builder.Services.AddScoped<IRepositorioCancha, RepositorioCancha>();
 builder.Services.AddScoped<IRepositorioImagen, RepositorioImagen>();
+builder.Services.AddScoped<IRepositorioTurno, RepositorioTurno>();
  
 
 // Entity Framework Core + Pomelo (MySQL)

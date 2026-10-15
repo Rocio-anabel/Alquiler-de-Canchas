@@ -1,0 +1,413 @@
+@{
+    ViewData["Title"] = "Turnos";
+}
+
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/css/select2.min.css" />
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/select2-bootstrap-5-theme@1.3.0/dist/select2-bootstrap-5-theme.min.css" />
+
+@Html.AntiForgeryToken()
+
+<div id="app" v-cloak>
+    <h1>Turnos</h1>
+
+    <div v-if="mensaje" class="alert alert-success py-2">{{ mensaje }}</div>
+    <div v-if="errorLista" class="alert alert-danger py-2">{{ errorLista }}</div>
+
+    <!-- Filtros -->
+    <div class="card card-body mb-3">
+        <div class="row g-2 align-items-end">
+            <div class="col-md-3">
+                <label class="form-label">Filtrar por</label>
+                <select class="form-select" v-model="filtro.tipo" v-on:change="cambiarTipoFiltro">
+                    <option value="ninguno">Sin filtro</option>
+                    <option value="fecha">Una fecha</option>
+                    <option value="rango">Entre dos fechas</option>
+                    <option value="cliente">Cliente</option>
+                    <option value="estado">Estado</option>
+                </select>
+            </div>
+
+            <div class="col-md-3" v-if="filtro.tipo === 'fecha'">
+                <label class="form-label">Fecha</label>
+                <input type="date" class="form-control" v-model="filtro.fecha" />
+            </div>
+
+            <template v-if="filtro.tipo === 'rango'">
+                <div class="col-md-3">
+                    <label class="form-label">Desde</label>
+                    <input type="date" class="form-control" v-model="filtro.fechaDesde" />
+                </div>
+                <div class="col-md-3">
+                    <label class="form-label">Hasta</label>
+                    <input type="date" class="form-control" v-model="filtro.fechaHasta" />
+                </div>
+            </template>
+
+            <div class="col-md-4" v-if="filtro.tipo === 'cliente'">
+                <label class="form-label">Cliente</label>
+                <select2-ajax v-model="filtro.idCliente"
+                              url="@Url.Action("BuscarClientes", "Turno")"
+                              placeholder="Buscar cliente..."
+                              v-bind:allow-clear="true"></select2-ajax>
+            </div>
+
+            <div class="col-md-3" v-if="filtro.tipo === 'estado'">
+                <label class="form-label">Estado</label>
+                <select class="form-select" v-model="filtro.estado">
+                    <option v-for="e in estados" v-bind:key="e.valor" v-bind:value="e.valor">{{ e.texto }}</option>
+                </select>
+            </div>
+
+            <div class="col-md-auto">
+                <button class="btn btn-primary" v-on:click="aplicarFiltro">Buscar</button>
+                <button class="btn btn-outline-secondary" v-on:click="limpiarFiltro">Limpiar</button>
+            </div>
+
+            <div class="col-md text-end">
+                <button class="btn btn-success" v-on:click="abrirNuevo">Nuevo turno</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Tabla -->
+    <table class="table table-striped align-middle">
+        <thead>
+            <tr>
+                <th>Fecha</th>
+                <th>Horario</th>
+                <th>Cancha</th>
+                <th>Cliente</th>
+                <th>Estado</th>
+                <th v-if="esAdmin">Creado por</th>
+                <th></th>
+            </tr>
+        </thead>
+        <tbody>
+            
+            <tr v-if="cargando"><td v-bind:colspan="esAdmin ? 7 : 6" class="text-center">Cargando...</td></tr>
+            <tr v-else-if="items.length === 0"><td v-bind:colspan="esAdmin ? 7 : 6" class="text-center text-muted">No hay turnos.</td></tr>
+
+            <tr v-for="t in items" v-bind:key="t.idTurno">
+                <td>{{ formatoFecha(t.fecha) }}</td>
+                <td>{{ t.horaInicio }} - {{ t.horaFin }}</td>
+                <td>{{ t.canchaTexto }}</td>
+                <td>{{ t.clienteTexto }}</td>
+                <td><span class="badge" v-bind:class="claseEstado(t.estado)">{{ t.estadoTexto }}</span></td>
+                <td v-if="esAdmin">{{ t.usuarioTexto }}</td>
+                <td class="text-end">
+                    <button class="btn btn-sm btn-outline-primary" v-on:click="abrirEditar(t)">Editar</button>
+                    <button class="btn btn-sm btn-outline-danger" v-on:click="eliminar(t)">Eliminar</button>
+                </td>
+            </tr>
+        </tbody>
+    </table>
+
+    <!-- Paginado -->
+    <div class="d-flex justify-content-between align-items-center">
+        <span class="text-muted">{{ total }} turno(s) - Página {{ pagina }} de {{ Math.max(totalPaginas, 1) }}</span>
+        <div>
+            <button class="btn btn-outline-secondary btn-sm" v-bind:disabled="pagina <= 1" v-on:click="irAPagina(pagina - 1)">Anterior</button>
+            <button class="btn btn-outline-secondary btn-sm" v-bind:disabled="pagina >= totalPaginas" v-on:click="irAPagina(pagina + 1)">Siguiente</button>
+        </div>
+    </div>
+
+    <!-- Modal alta / edición -->
+    <div class="modal fade" id="modalTurno" tabindex="-1">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title">{{ form.idTurno ? 'Editar turno' : 'Nuevo turno' }}</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+                </div>
+                <div class="modal-body">
+                    <div v-if="errorForm" class="alert alert-danger py-2">{{ errorForm }}</div>
+
+                    <div class="mb-3">
+                        <label class="form-label">Cancha</label>
+                        <select2-ajax v-model="form.idCancha"
+                                      v-bind:texto="form.canchaTexto"
+                                      url="@Url.Action("BuscarCanchas", "Turno")"
+                                      placeholder="Buscar cancha..."
+                                      parent="#modalTurno"></select2-ajax>
+                    </div>
+                    <div class="mb-3">
+                        <label class="form-label">Cliente</label>
+                        <select2-ajax v-model="form.idCliente"
+                                      v-bind:texto="form.clienteTexto"
+                                      url="@Url.Action("BuscarClientes", "Turno")"
+                                      placeholder="Buscar cliente..."
+                                      parent="#modalTurno"></select2-ajax>
+                    </div>
+                    <div class="row mb-3">
+                        <div class="col">
+                            <label class="form-label">Fecha</label>
+                            <input type="date" class="form-control" v-model="form.fecha" />
+                        </div>
+                        <div class="col">
+                            <label class="form-label">Hora de inicio</label>
+                            <input type="time" class="form-control" v-model="form.horaInicio" />
+                        </div>
+                    </div>
+                    <p class="text-muted">Duración: 1 h 30 min. {{ textoFin }}</p>
+
+                    <div class="mb-3" v-if="form.idTurno">
+                        <label class="form-label">Estado</label>
+                        <select class="form-select" v-model="form.estado">
+                            <option v-for="e in estados" v-bind:key="e.valor" v-bind:value="e.valor">{{ e.texto }}</option>
+                        </select>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button class="btn btn-secondary" data-bs-dismiss="modal">Cancelar</button>
+                    <button class="btn btn-primary" v-bind:disabled="guardando" v-on:click="guardar">Guardar</button>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    <script src="https://unpkg.com/vue@3/dist/vue.global.prod.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/js/select2.min.js"></script>
+    <script>
+        const esAdmin = @(User.IsInRole("Administrador") ? "true" : "false");
+        const urls = {
+            listar: '@Url.Action("Listar", "Turno")',
+            crear: '@Url.Action("Crear", "Turno")',
+            editar: '@Url.Action("Editar", "Turno")',
+            eliminar: '@Url.Action("Eliminar", "Turno")'
+        };
+        const token = document.querySelector('input[name="__RequestVerificationToken"]').value;
+
+        async function api(url, opciones = {}) {
+            const resp = await fetch(url, {
+                ...opciones,
+                headers: { 'Content-Type': 'application/json', 'RequestVerificationToken': token }
+            });
+            const data = await resp.json().catch(() => ({}));
+            if (!resp.ok) throw new Error(data.mensaje || 'Ocurrió un error inesperado.');
+            return data;
+        }
+
+        // Componente Select2 con búsqueda asíncrona en el servidor
+        const Select2Ajax = {
+            props: {
+                modelValue: { type: [Number, String], default: null },
+                url: String,
+                placeholder: String,
+                texto: { type: String, default: '' },     // texto a mostrar al precargar (edición)
+                parent: { type: String, default: null },  // contenedor del dropdown (modales)
+                allowClear: { type: Boolean, default: false }
+            },
+            emits: ['update:modelValue'],
+            template: '<select style="width:100%"><option></option></select>',
+            mounted() {
+                const $el = $(this.$el);
+                $el.select2({
+                    theme: 'bootstrap-5',
+                    width: '100%',
+                    placeholder: this.placeholder,
+                    allowClear: this.allowClear,
+                    dropdownParent: this.parent ? $(this.parent) : undefined,
+                    ajax: {
+                        url: this.url,
+                        dataType: 'json',
+                        delay: 250,
+                        data: p => ({ term: p.term || '', pagina: p.page || 1 }),
+                        processResults: d => ({ results: d.results, pagination: { more: d.more } })
+                    }
+                });
+                $el.on('select2:select', e => this.$emit('update:modelValue', parseInt(e.params.data.id)));
+                $el.on('select2:clear', () => this.$emit('update:modelValue', null));
+                this.precargar();
+            },
+            watch: {
+                modelValue(v) {
+                    if (v === null || v === '') $(this.$el).val(null).trigger('change');
+                },
+                texto() { this.precargar(); }
+            },
+            methods: {
+                precargar() {
+                    if (this.modelValue && this.texto) {
+                        const $el = $(this.$el);
+                        $el.empty().append(new Option(this.texto, this.modelValue, true, true)).trigger('change');
+                    }
+                }
+            },
+            beforeUnmount() { $(this.$el).select2('destroy'); }
+        };
+
+        const { createApp, reactive, ref, computed, onMounted } = Vue;
+
+        createApp({
+            components: { Select2Ajax },
+            setup() {
+                const estados = [
+                    { valor: 0, texto: 'Confirmado' },
+                    { valor: 1, texto: 'Finalizado' },
+                    { valor: 2, texto: 'Cancelado' },
+                    { valor: 3, texto: 'Ausente' }
+                ];
+
+                const items = ref([]);
+                const total = ref(0);
+                const pagina = ref(1);
+                const totalPaginas = ref(1);
+                const tamPagina = 10;
+                const cargando = ref(false);
+                const errorLista = ref('');
+                const mensaje = ref('');
+
+                const filtro = reactive({ tipo: 'ninguno', fecha: '', fechaDesde: '', fechaHasta: '', idCliente: null, estado: 0 });
+
+                const formVacio = () => ({
+                    idTurno: 0, idCancha: null, canchaTexto: '', idCliente: null, clienteTexto: '',
+                    fecha: '', horaInicio: '', estado: 0
+                });
+                const form = reactive(formVacio());
+                const errorForm = ref('');
+                const guardando = ref(false);
+                let modal = null;
+
+                const textoFin = computed(() => {
+                    if (!form.horaInicio) return '';
+                    const [h, m] = form.horaInicio.split(':').map(Number);
+                    const t = h * 60 + m + 90;
+                    if (t >= 1440) return 'El turno no puede terminar después de la medianoche.';
+                    const hh = String(Math.floor(t / 60)).padStart(2, '0');
+                    const mm = String(t % 60).padStart(2, '0');
+                    return 'Finaliza a las ' + hh + ':' + mm + '.';
+                });
+
+                function mostrarMensaje(texto) {
+                    mensaje.value = texto;
+                    setTimeout(() => { mensaje.value = ''; }, 4000);
+                }
+
+                async function cargar() {
+                    cargando.value = true;
+                    errorLista.value = '';
+                    try {
+                        const p = new URLSearchParams({ pagina: pagina.value, tamPagina });
+                        if (filtro.tipo === 'fecha') p.set('fechaDesde', filtro.fecha);
+                        if (filtro.tipo === 'rango') { p.set('fechaDesde', filtro.fechaDesde); p.set('fechaHasta', filtro.fechaHasta); }
+                        if (filtro.tipo === 'cliente') p.set('idCliente', filtro.idCliente);
+                        if (filtro.tipo === 'estado') p.set('estado', filtro.estado);
+
+                        const data = await api(urls.listar + '?' + p.toString());
+                        items.value = data.items;
+                        total.value = data.total;
+                        totalPaginas.value = data.totalPaginas;
+                        // si la página quedó fuera de rango (ej. se borró el último de la página)
+                        if (pagina.value > 1 && data.items.length === 0 && data.totalPaginas > 0) {
+                            pagina.value = data.totalPaginas;
+                            return cargar();
+                        }
+                    } catch (e) {
+                        errorLista.value = e.message;
+                    } finally {
+                        cargando.value = false;
+                    }
+                }
+
+                function filtroValido() {
+                    if (filtro.tipo === 'fecha' && !filtro.fecha) { errorLista.value = 'Elegí una fecha.'; return false; }
+                    if (filtro.tipo === 'rango') {
+                        if (!filtro.fechaDesde || !filtro.fechaHasta) { errorLista.value = 'Elegí las dos fechas.'; return false; }
+                        if (filtro.fechaDesde > filtro.fechaHasta) { errorLista.value = 'La fecha "desde" no puede ser posterior a "hasta".'; return false; }
+                    }
+                    if (filtro.tipo === 'cliente' && !filtro.idCliente) { errorLista.value = 'Elegí un cliente.'; return false; }
+                    return true;
+                }
+
+                function aplicarFiltro() {
+                    errorLista.value = '';
+                    if (!filtroValido()) return;
+                    pagina.value = 1;
+                    cargar();
+                }
+
+                function cambiarTipoFiltro() {
+                    filtro.fecha = ''; filtro.fechaDesde = ''; filtro.fechaHasta = '';
+                    filtro.idCliente = null; filtro.estado = 0;
+                    if (filtro.tipo === 'ninguno') aplicarFiltro();
+                }
+
+                function limpiarFiltro() {
+                    filtro.tipo = 'ninguno';
+                    cambiarTipoFiltro();
+                }
+
+                function irAPagina(n) {
+                    if (n < 1 || n > totalPaginas.value) return;
+                    pagina.value = n;
+                    cargar();
+                }
+
+                function abrirNuevo() {
+                    Object.assign(form, formVacio());
+                    errorForm.value = '';
+                    modal.show();
+                }
+
+                function abrirEditar(t) {
+                    Object.assign(form, {
+                        idTurno: t.idTurno,
+                        idCancha: t.idCancha, canchaTexto: t.canchaTexto,
+                        idCliente: t.idCliente, clienteTexto: t.clienteTexto,
+                        fecha: t.fecha, horaInicio: t.horaInicio, estado: t.estado
+                    });
+                    errorForm.value = '';
+                    modal.show();
+                }
+
+                async function guardar() {
+                    errorForm.value = '';
+                    guardando.value = true;
+                    try {
+                        const cuerpo = {
+                            idTurno: form.idTurno, idCancha: form.idCancha, idCliente: form.idCliente,
+                            fecha: form.fecha, horaInicio: form.horaInicio, estado: form.estado
+                        };
+                        const data = await api(form.idTurno ? urls.editar : urls.crear,
+                                               { method: 'POST', body: JSON.stringify(cuerpo) });
+                        modal.hide();
+                        mostrarMensaje(data.mensaje);
+                        await cargar();
+                    } catch (e) {
+                        errorForm.value = e.message;   // incluye "La cancha ya está ocupada..."
+                    } finally {
+                        guardando.value = false;
+                    }
+                }
+
+                async function eliminar(t) {
+                    if (!confirm('¿Eliminar el turno del ' + formatoFecha(t.fecha) + ' a las ' + t.horaInicio + '?')) return;
+                    try {
+                        const data = await api(urls.eliminar + '/' + t.idTurno, { method: 'POST' });
+                        mostrarMensaje(data.mensaje);
+                        await cargar();
+                    } catch (e) {
+                        errorLista.value = e.message;
+                    }
+                }
+
+                const formatoFecha = f => f.split('-').reverse().join('/');
+                const claseEstado = e => ['bg-success', 'bg-primary', 'bg-secondary', 'bg-warning text-dark'][e];
+
+                onMounted(() => {
+                    modal = new bootstrap.Modal(document.getElementById('modalTurno'));
+                    cargar();
+                });
+
+                return {
+                    esAdmin, estados, items, total, pagina, totalPaginas, cargando, errorLista, mensaje,
+                    filtro, form, errorForm, guardando, textoFin,
+                    aplicarFiltro, cambiarTipoFiltro, limpiarFiltro, irAPagina,
+                    abrirNuevo, abrirEditar, guardar, eliminar, formatoFecha, claseEstado
+                };
+            }
+        }).mount('#app');
+    </script>
+}
