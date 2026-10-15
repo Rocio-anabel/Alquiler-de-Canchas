@@ -151,5 +151,65 @@ namespace Alquiler_de_Canchas.Models
 
             return cliente;
         }
+        public IList<Cliente> BuscarPorTermino(string termino, int paginaNro = 1, int tamPagina = 10)
+        {
+            if (paginaNro < 1) paginaNro = 1;
+            if (tamPagina < 1) tamPagina = 10;
+
+            var lista = new List<Cliente>();
+            using (var conn = new MySqlConnection(connectionString))
+            {
+                var sql = @"SELECT ID_cliente, nombre, apellido, email, telefono
+                            FROM cliente
+                            WHERE nombre LIKE @termino OR apellido LIKE @termino
+                            ORDER BY apellido, nombre, ID_cliente
+                            LIMIT @tam OFFSET @offset";
+                using (var cmd = new MySqlCommand(sql, conn))
+                {
+                    cmd.Parameters.AddWithValue("@termino", PatronLike(termino));
+                    cmd.Parameters.AddWithValue("@tam", tamPagina);
+                    cmd.Parameters.AddWithValue("@offset", (paginaNro - 1) * tamPagina);
+                    conn.Open();
+                    using (var reader = cmd.ExecuteReader())
+                    {
+                        while (reader.Read())
+                        {
+                            lista.Add(new Cliente
+                            {
+                                IdCliente = reader.GetInt32("ID_cliente"),
+                                Nombre = reader.GetString("nombre"),
+                                Apellido = reader.GetString("apellido"),
+                                Email = reader.GetString("email"),
+                                Telefono = reader.GetString("telefono")
+                            });
+                        }
+                    }
+                }
+            }
+            return lista;
+        }
+
+        public int ObtenerCantidadPorTermino(string termino)
+        {
+            using (var conn = new MySqlConnection(connectionString))
+            {
+                var sql = @"SELECT COUNT(*) FROM cliente
+                            WHERE nombre LIKE @termino OR apellido LIKE @termino";
+                using (var cmd = new MySqlCommand(sql, conn))
+                {
+                    cmd.Parameters.AddWithValue("@termino", PatronLike(termino));
+                    conn.Open();
+                    return Convert.ToInt32(cmd.ExecuteScalar());
+                }
+            }
+        }
+
+        
+        private static string PatronLike(string? termino)
+        {
+            var t = (termino ?? "").Trim()
+                .Replace("\\", "\\\\").Replace("%", "\\%").Replace("_", "\\_");
+            return "%" + t + "%";
+        }
     }
 }

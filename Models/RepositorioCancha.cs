@@ -62,5 +62,33 @@ namespace Alquiler_de_Canchas.Models
                 .Include(c => c.Imagenes)
                 .FirstOrDefault(c => c.IdCancha == id);
         }
+
+        public IList<Cancha> BuscarPorTermino(string termino, int paginaNro = 1, int tamPagina = 10)
+        {
+            if (paginaNro < 1) paginaNro = 1;
+            if (tamPagina < 1) tamPagina = 10;
+            termino = (termino ?? "").Trim();
+        
+            return contexto.Canchas
+                .AsNoTracking()
+                .Include(c => c.TipoCancha)
+                .Where(c => c.Estado &&
+                       (c.Numero.ToString().Contains(termino) ||
+                        c.TipoSuperficie.Contains(termino) ||
+                        c.TipoCancha!.Nombre.Contains(termino)))
+                .OrderBy(c => c.Numero).ThenBy(c => c.IdCancha)
+                .Skip((paginaNro - 1) * tamPagina)
+                .Take(tamPagina)
+                .ToList();
+        }
+        
+        public int ObtenerCantidadPorTermino(string termino)
+        {
+            termino = (termino ?? "").Trim();
+            return contexto.Canchas.Count(c => c.Estado &&
+                   (c.Numero.ToString().Contains(termino) ||
+                    c.TipoSuperficie.Contains(termino) ||
+                    c.TipoCancha!.Nombre.Contains(termino)));
+        }
     }
 }

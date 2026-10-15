@@ -11,6 +11,8 @@ namespace Alquiler_de_Canchas.Models
         }
         public int Alta(Turno p)
         {
+            if (HaySuperposicion(p))
+                throw new InvalidOperationException("La cancha ya está ocupada en ese horario.");
             contexto.Turnos.Add(p);
             return contexto.SaveChanges();
         }
@@ -34,7 +36,7 @@ namespace Alquiler_de_Canchas.Models
             var hasta = fechaHasta.Date.AddDays(1);
             return contexto.Turnos
                     .Where(t => t.Fecha >= desde && t.Fecha < hasta)
-                    .Include(t => t.Cancha)
+                    .Include(t => t.Cancha).ThenInclude(c => c!.TipoCancha)
                     .Include(t => t.Cliente)
                     .Include(t => t.Usuario)
                     .OrderBy(t => t.Fecha).ThenBy(t => t.HoraInicio).ThenBy(t => t.IdTurno)
@@ -49,7 +51,7 @@ namespace Alquiler_de_Canchas.Models
             if (tamPagina < 1) tamPagina = 10;
             return contexto.Turnos
                     .Where(t => t.IdCliente == idCliente)
-                    .Include(t => t.Cancha)
+                    .Include(t => t.Cancha).ThenInclude(c => c!.TipoCancha)
                     .Include(t => t.Cliente)
                     .Include(t => t.Usuario)
                     .OrderByDescending(t => t.Fecha).ThenBy(t => t.HoraInicio).ThenBy(t => t.IdTurno)
@@ -64,7 +66,7 @@ namespace Alquiler_de_Canchas.Models
             if (tamPagina < 1) tamPagina = 10;
             return contexto.Turnos
                     .Where(t => t.Estado == estado)
-                    .Include(t => t.Cancha)
+                    .Include(t => t.Cancha).ThenInclude(c => c!.TipoCancha)
                     .Include(t => t.Cliente)
                     .Include(t => t.Usuario)
                     .OrderBy(t => t.Fecha).ThenBy(t => t.HoraInicio).ThenBy(t => t.IdTurno)
@@ -81,7 +83,7 @@ namespace Alquiler_de_Canchas.Models
             var dia = fecha.Date;
             return contexto.Turnos
                 .AsNoTracking()
-                .Include(t => t.Cancha)
+                .Include(t => t.Cancha).ThenInclude(c => c!.TipoCancha)
                 .Include(t => t.Cliente)
                 .Include(t => t.Usuario)
                 .Where(t => t.Fecha == dia)
@@ -93,6 +95,8 @@ namespace Alquiler_de_Canchas.Models
 
         public int Modificacion(Turno p)
         {
+            if (p.Estado != EstadoTurno.Cancelado && HaySuperposicion(p))
+                throw new InvalidOperationException("La cancha ya está ocupada en ese horario.");
             contexto.Turnos.Update(p);
             return contexto.SaveChanges();
         }
@@ -130,7 +134,7 @@ namespace Alquiler_de_Canchas.Models
             if (paginaNro < 1) paginaNro = 1;
             if (tamPagina < 1) tamPagina = 10;
             return contexto.Turnos    
-                    .Include(t => t.Cancha)
+                    .Include(t => t.Cancha).ThenInclude(c => c!.TipoCancha)
                     .Include(t => t.Cliente)
                     .Include(t => t.Usuario)
                     .OrderByDescending(t => t.Fecha)
@@ -145,5 +149,21 @@ namespace Alquiler_de_Canchas.Models
         {
             return contexto.Turnos.FirstOrDefault(t => t.IdTurno == id);
         }
+
+        private bool HaySuperposicion(Turno t)
+        {
+            var dia = t.Fecha.Date;
+            var siguiente = dia.AddDays(1);
+            return contexto.Turnos.Any(x =>
+                x.IdCancha == t.IdCancha &&
+                x.IdTurno != t.IdTurno &&                 // en Alta es 0, en Edit excluye al propio turno
+                x.Estado != EstadoTurno.Cancelado &&      // un turno cancelado libera el horario
+                x.Fecha >= dia && x.Fecha < siguiente &&
+                x.HoraInicio < t.HoraFin && x.HoraFin > t.HoraInicio);
+        }
+
+
+
+
     }
 }
