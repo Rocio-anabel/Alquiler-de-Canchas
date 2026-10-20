@@ -26,7 +26,11 @@ builder.Services.AddScoped<IRepositorioCliente, RepositorioCliente>();
 builder.Services.AddScoped<IRepositorioTipoCancha, RepositorioTipoCancha>();
 builder.Services.AddScoped<IRepositorioCancha, RepositorioCancha>();
 builder.Services.AddScoped<IRepositorioImagen, RepositorioImagen>();
+<<<<<<< Updated upstream
 builder.Services.AddScoped<IRepositorioTurno, RepositorioTurno>();
+=======
+builder.Services.AddScoped<IRepositorioPago, RepositorioPago>();
+>>>>>>> Stashed changes
  
 
 // Entity Framework Core + Pomelo (MySQL)

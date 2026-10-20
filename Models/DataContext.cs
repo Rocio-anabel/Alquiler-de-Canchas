@@ -12,11 +12,14 @@ namespace Alquiler_de_Canchas.Models
         public DbSet<Imagen> Imagenes {get; set;}
         public DbSet<Cancha> Canchas {get; set;}
         public DbSet<Turno> Turnos {get; set;}
+
+        public DbSet<Pago> Pagos { get; set; }
         protected override void OnModelCreating(ModelBuilder mb)
         {
             // enum('Empleado','Administrador') en la BD
             mb.Entity<Usuario>().Property(u => u.Rol).HasConversion<string>();
             mb.Entity<Turno>().Property(t => t.Estado).HasConversion<string>();
+            mb.Entity<Pago>().Property(p => p.TipoTransaccion).HasConversion<string>();
         }
     }
 }

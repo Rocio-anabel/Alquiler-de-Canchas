@@ -100,6 +100,28 @@ CREATE TABLE IF NOT EXISTS `alquiler_canchas`.`turno` (
         ON DELETE RESTRICT ON UPDATE RESTRICT
 ) ENGINE = InnoDB;
 
+-- ---------------------- PAGO -----------------------
+CREATE TABLE IF NOT EXISTS `alquiler_canchas`.`pago` (
+    `ID_pago` INT NOT NULL AUTO_INCREMENT,
+    `ID_turno` INT NOT NULL,
+    `ID_usuario` INT NOT NULL,
+    `monto` DECIMAL(10,2) NOT NULL,
+    `fecha_pago` DATE NOT NULL,
+    `metodo_pago` VARCHAR(30) NOT NULL,
+    `tipo_transaccion` ENUM('Sena','PagoTotal','Reembolso') NOT NULL DEFAULT 'PagoTotal',
+    PRIMARY KEY (`ID_pago`),
+
+    CONSTRAINT `fk_pago_turno`
+        FOREIGN KEY (`ID_turno`)
+        REFERENCES `turno`(`ID_turno`)
+        ON DELETE RESTRICT ON UPDATE RESTRICT,
+
+    CONSTRAINT `fk_pago_usuario`
+        FOREIGN KEY (`ID_usuario`)
+        REFERENCES `usuario`(`ID_usuario`)
+        ON DELETE RESTRICT ON UPDATE RESTRICT
+) ENGINE = InnoDB;
+
 -- =====================================================
 -- DATOS DE PRUEBA
 -- (contraseñas hasheadas con PasswordHasher de ASP.NET Core)
