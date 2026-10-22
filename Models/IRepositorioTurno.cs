@@ -10,5 +10,8 @@ namespace Alquiler_de_Canchas.Models
         int ObtenerCantidadPorCliente(int idCliente);
         IList<Turno> BuscarTurnosPorEstado(EstadoTurno estado, int paginaNro = 1, int tamPagina = 10);
         int ObtenerCantidadPorEstado(EstadoTurno estado);
+        // Búsqueda para el selector asíncrono (por cliente o número de cancha)
+        IList<Turno> BuscarPorTermino(string termino, int paginaNro = 1, int tamPagina = 10);
+        int ObtenerCantidadPorTermino(string termino);
     }
 }

@@ -46,7 +46,39 @@ namespace Alquiler_de_Canchas.Models
 
             return contexto.Pagos
                 .AsNoTracking()
-                .Include(p => p.Turno)
+                .Include(p => p.Turno).ThenInclude(t => t!.Cliente)
+                .Include(p => p.Turno).ThenInclude(t => t!.Cancha)
+                .Include(p => p.Usuario)
+                .OrderByDescending(p => p.FechaPago)
+                .ThenByDescending(p => p.IdPago)
+                .Skip((paginaNro - 1) * tamPagina)
+                .Take(tamPagina)
+                .ToList();
+        }
+
+        private IQueryable<Pago> Filtrar(DateTime? desde, DateTime? hasta, TipoTransaccion? tipo)
+        {
+            var q = contexto.Pagos.AsNoTracking().AsQueryable();
+            if (desde.HasValue) q = q.Where(p => p.FechaPago >= desde.Value.Date);
+            if (hasta.HasValue) q = q.Where(p => p.FechaPago <= hasta.Value.Date);
+            if (tipo.HasValue) q = q.Where(p => p.TipoTransaccion == tipo.Value);
+            return q;
+        }
+
+        public int ObtenerCantidadFiltrada(DateTime? desde, DateTime? hasta, TipoTransaccion? tipo)
+        {
+            return Filtrar(desde, hasta, tipo).Count();
+        }
+
+        public IList<Pago> ObtenerListaFiltrada(DateTime? desde, DateTime? hasta, TipoTransaccion? tipo,
+                                                int paginaNro = 1, int tamPagina = 10)
+        {
+            if (paginaNro < 1) paginaNro = 1;
+            if (tamPagina < 1) tamPagina = 10;
+
+            return Filtrar(desde, hasta, tipo)
+                .Include(p => p.Turno).ThenInclude(t => t!.Cliente)
+                .Include(p => p.Turno).ThenInclude(t => t!.Cancha)
                 .Include(p => p.Usuario)
                 .OrderByDescending(p => p.FechaPago)
                 .ThenByDescending(p => p.IdPago)
@@ -59,7 +91,8 @@ namespace Alquiler_de_Canchas.Models
         {
             return contexto.Pagos
                 .AsNoTracking()
-                .Include(p => p.Turno)
+                .Include(p => p.Turno).ThenInclude(t => t!.Cliente)
+                .Include(p => p.Turno).ThenInclude(t => t!.Cancha)
                 .Include(p => p.Usuario)
                 .FirstOrDefault(p => p.IdPago == id);
         }

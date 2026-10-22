@@ -165,5 +165,34 @@ namespace Alquiler_de_Canchas.Models
 
 
 
+    
+        private IQueryable<Turno> ConsultaPorTermino(string termino)
+        {
+            termino = (termino ?? "").Trim();
+            var q = contexto.Turnos.AsNoTracking().AsQueryable();
+            if (termino.Length == 0) return q;
+            return q.Where(t =>
+                t.Cliente!.Apellido.Contains(termino) ||
+                t.Cliente!.Nombre.Contains(termino) ||
+                t.Cancha!.Numero.ToString().Contains(termino));
+        }
+
+        public IList<Turno> BuscarPorTermino(string termino, int paginaNro = 1, int tamPagina = 10)
+        {
+            if (paginaNro < 1) paginaNro = 1;
+            if (tamPagina < 1) tamPagina = 10;
+            return ConsultaPorTermino(termino)
+                .Include(t => t.Cancha).ThenInclude(c => c!.TipoCancha)
+                .Include(t => t.Cliente)
+                .OrderByDescending(t => t.Fecha).ThenBy(t => t.HoraInicio).ThenBy(t => t.IdTurno)
+                .Skip((paginaNro - 1) * tamPagina)
+                .Take(tamPagina)
+                .ToList();
+        }
+
+        public int ObtenerCantidadPorTermino(string termino)
+        {
+            return ConsultaPorTermino(termino).Count();
+        }
     }
 }
