@@ -58,6 +58,7 @@ namespace Alquiler_de_Canchas.Controllers
                     idPago = p.IdPago,
                     idTurno = p.IdTurno,
                     turnoTexto = TextoTurno(p.Turno),
+                    precioCancha = p.Turno?.Cancha?.PrecioPorHora,
                     monto = p.Monto,
                     fechaPago = p.FechaPago.ToString("yyyy-MM-dd"),
                     metodoPago = p.MetodoPago,
@@ -94,7 +95,7 @@ namespace Alquiler_de_Canchas.Controllers
                 var total = repositorioTurno.ObtenerCantidadPorTermino(term);
                 return Json(new
                 {
-                    results = items.Select(t => new { id = t.IdTurno, text = TextoTurno(t) }),
+                    results = items.Select(t => new { id = t.IdTurno, text = TextoTurno(t), precio = t.Cancha?.PrecioPorHora }),
                     more = pagina * tam < total
                 });
             }
