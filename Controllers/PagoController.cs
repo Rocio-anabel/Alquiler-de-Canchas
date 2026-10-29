@@ -145,6 +145,9 @@ namespace Alquiler_de_Canchas.Controllers
                 var actual = repositorio.ObtenerPorId(dto.IdPago);
                 if (actual == null) return NotFound(new { mensaje = "El pago no existe." });
 
+                if (repositorioTurno.ObtenerPorId(datos.IdTurno) == null)
+                return BadRequest(new { mensaje = "El turno seleccionado no existe." });
+
                 // Se arma una entidad limpia (solo claves foráneas) para no actualizar Turno/Usuario por error.
                 // IdUsuario no se toca: sigue siendo quien registró el pago.
                 var pago = new Pago
