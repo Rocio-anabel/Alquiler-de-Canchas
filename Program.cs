@@ -21,6 +21,11 @@ builder.Services.AddAuthentication(CookieAuthenticationDefaults.AuthenticationSc
         options.AccessDeniedPath = "/Usuario/AccesoDenegado";
         options.ExpireTimeSpan = TimeSpan.FromHours(8);
         options.SlidingExpiration = true;
+        // Si la ruta es /api, usar JWT en vez de cookie
+        options.ForwardDefaultSelector = ctx =>
+            ctx.Request.Path.StartsWithSegments("/api")
+                ? JwtBearerDefaults.AuthenticationScheme
+                : null;
     })
     .AddJwtBearer(JwtBearerDefaults.AuthenticationScheme, options =>
     {
@@ -65,7 +70,7 @@ if (!app.Environment.IsDevelopment())
 app.UseHttpsRedirection();
 app.UseRouting();
 
-app.UseAuthentication();   // <- faltaba: identifica quién es el usuario (cookie)
+app.UseAuthentication();   
 app.UseAuthorization();
 
 app.MapStaticAssets();

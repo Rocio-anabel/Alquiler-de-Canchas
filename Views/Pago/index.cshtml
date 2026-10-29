@@ -101,7 +101,11 @@
                                       v-bind:texto="form.turnoTexto"
                                       url="@Url.Action("BuscarTurnos", "Pago")"
                                       placeholder="Buscar por cliente o nº de cancha..."
-                                      parent="#modalPago"></select2-ajax>
+                                      parent="#modalPago"
+                                      v-on:seleccion="turnoElegido"></select2-ajax>
+                        <div v-if="precioCancha !== null" class="form-text">
+                            Precio de la cancha: <strong>{{ formatoMonto(precioCancha) }}</strong> por hora
+                        </div>
                     </div>
                     <div class="row mb-3">
                         <div class="col">
@@ -169,7 +173,7 @@
                 parent: { type: String, default: null },
                 allowClear: { type: Boolean, default: false }
             },
-            emits: ['update:modelValue'],
+            emits: ['update:modelValue', 'seleccion'],
             template: '<select style="width:100%"><option></option></select>',
             mounted() {
                 const $el = $(this.$el);
@@ -187,7 +191,10 @@
                         processResults: d => ({ results: d.results, pagination: { more: d.more } })
                     }
                 });
-                $el.on('select2:select', e => this.$emit('update:modelValue', parseInt(e.params.data.id)));
+                $el.on('select2:select', e => {
+                    this.$emit('update:modelValue', parseInt(e.params.data.id));
+                    this.$emit('seleccion', e.params.data);
+                    });
                 $el.on('select2:clear', () => this.$emit('update:modelValue', null));
                 this.precargar();
             },
@@ -229,6 +236,8 @@
                 const cargando = ref(false);
                 const errorLista = ref('');
                 const mensaje = ref('');
+                const precioCancha = ref(null);
+
 
                 const filtro = reactive({ fechaDesde: '', fechaHasta: '', tipo: '' });
 
@@ -245,6 +254,10 @@
                 function mostrarMensaje(texto) {
                     mensaje.value = texto;
                     setTimeout(() => { mensaje.value = ''; }, 4000);
+                }
+
+                function turnoElegido(data) {
+                     precioCancha.value = data && data.precio != null ? data.precio : null;
                 }
 
                 async function cargar() {
@@ -295,6 +308,7 @@
 
                 function abrirNuevo() {
                     Object.assign(form, formVacio());
+                    precioCancha.value = null;
                     errorForm.value = '';
                     modal.show();
                 }
@@ -309,6 +323,7 @@
                     // si el método guardado no está en la lista, se agrega para no perderlo
                     if (!metodos.includes(form.metodoPago)) metodos.push(form.metodoPago);
                     errorForm.value = '';
+                    precioCancha.value = p.precioCancha ?? null;
                     modal.show();
                 }
 
@@ -357,7 +372,7 @@
                     tipos, metodos, esAdmin, items, total, pagina, totalPaginas, cargando, errorLista, mensaje,
                     filtro, form, errorForm, guardando,
                     aplicarFiltro, limpiarFiltro, irAPagina,
-                    abrirNuevo, abrirEditar, guardar, eliminar, formatoFecha, formatoMonto, claseTipo
+                    abrirNuevo, abrirEditar, guardar, eliminar, formatoFecha, formatoMonto, claseTipo, precioCancha, turnoElegido
                 };
             }
         }).mount('#app');
