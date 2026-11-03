@@ -55,3 +55,15 @@ nunit-*.xml
 
 wwwroot/Uploads/Canchas/*
 !wwwroot/Uploads/Canchas/.gitkeep
+
+wwwroot/Uploads/Avatares/*
+!wwwroot/Uploads/Avatares/avatar-default.png
+
+# IDE y archivos de usuario
+.vs/
+.vscode/
+*.user
+*.suo
+
+# Configuración local con claves
+appsettings.Development.json
