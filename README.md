@@ -56,8 +56,8 @@ Estado actual del proyecto (entrega para **regularizar**).
 | Requerimiento mínimo | Estado | Enlace al código / controladores | Evidencia (captura / GIF / video) |
 |---|---|---|---|
 | 1. 6+ tablas y relación 1:N (Turno depende de Cancha + Cliente + Usuario) | ✅ Cumplido | [DataContext.cs](Models/DataContext.cs), [AlquilerDeCancha.sql](AlquilerDeCancha.sql) | ![DER](docs/der.png) <br> 7 tablas. 1:N: TipoCancha→Cancha, Cancha→Imagen, Turno→Pago. Turno depende de Cancha + Cliente + Usuario |
-| 2. Login, roles y avatar | 🟡 En progreso (login y roles listos; avatar a confirmar) | [UsuarioController.cs](Controllers/UsuarioController.cs), [Program.cs](Program.cs) | _Pendiente: captura de perfil con avatar_ |
-| 3. Manejo de archivos (fotos de canchas) | 🟡 En progreso | [CanchaController.cs](Controllers/CanchaController.cs), [Imagen.cs](Models/Imagen.cs) | _Pendiente: GIF de subida de imágenes_ |
+| 2. Login, roles y avatar | 🟡 En progreso (login y roles listos; avatar a confirmar) | [UsuarioController.cs](Controllers/UsuarioController.cs), [Program.cs](Program.cs) | ![Captura de Avatar](docs/evidencias/perfil-avatar.png) |
+| 3. Manejo de archivos (fotos de canchas) | 🟡 En progreso | [CanchaController.cs](Controllers/CanchaController.cs), [Imagen.cs](Models/Imagen.cs) | ![Cargar imagen de una cancha](docs/evidencias/cargarimagencancha.gif) |
 | 4. ABM completo con Vue.js/AJAX (Pagos) | 🟡 En progreso (endpoints JSON listos) | [PagoController.cs](Controllers/PagoController.cs) (`Listar`, `Crear`, `Editar`, `Eliminar`), `Views/Pago/Index.cshtml` | _Pendiente: GIF del ABM sin recarga_ |
 | 5. Paginado por servidor | ✅ Cumplido (Pagos) | [PagoController.cs → Listar](Controllers/PagoController.cs) | _Pendiente: captura del inspector de red con `pagina=2`_ |
 | 6. Selección asíncrona de entidades relacionadas | ✅ Cumplido (Pagos → Turno) | [PagoController.cs → BuscarTurnos](Controllers/PagoController.cs) | _Pendiente: GIF del desplegable buscando turnos_ |
